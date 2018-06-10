@@ -10,6 +10,8 @@ int bytes_index = 0;
 int pwm_counter = 0;
 char servo_select = 0;
 
+volatile int run = 0;
+
 ISR(USART_RX_vect) {
 	char byte = UDR0;
 	transmitByte(byte);
@@ -18,6 +20,10 @@ ISR(USART_RX_vect) {
 		bytes[bytes_index] = 0;
 		if(bytes[0] == 's') {
 			servo_select = atoi(bytes+1);
+		} else if (bytes[0] == 'r') {
+			run = 1;
+		} else if (bytes[0] == 'p') {
+			run = 0;
 		} else {
 			setServoAngle(servo_select, atoi(bytes));
 		}
@@ -47,6 +53,11 @@ int main(void) {
 	
 	registerServo(0);
 	registerServo(1);
+	registerServo(2);
+	registerServo(3);
+	registerServo(4);
+	registerServo(5);
+	registerServo(6);
 	registerServo(7);
 	
 	initServoTimer(100);
@@ -54,6 +65,34 @@ int main(void) {
 	printString("Welcome!\r\n");
 
 	while(1) {
+		if(run == 1) {
+			setServoAngle(0, 22);
+			setServoAngle(1, 14);
+
+			setServoAngle(2, 12);
+			setServoAngle(3, 20);
+
+			setServoAngle(4, 22);
+			setServoAngle(5, 24);
+
+			setServoAngle(6, 12);
+			setServoAngle(7, 10);
+			_delay_ms(2000);
+
+
+			setServoAngle(0, 17);
+			setServoAngle(1, 24);
+
+			setServoAngle(2, 17);
+			setServoAngle(3, 10);
+
+			setServoAngle(4, 17);
+			setServoAngle(5, 14);
+
+			setServoAngle(6, 17);
+			setServoAngle(7, 20);
+			_delay_ms(2000);
+		}
 	}
 	return 0;
 }
