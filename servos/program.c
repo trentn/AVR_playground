@@ -7,7 +7,6 @@
 char bytes[10] = {0};
 int bytes_index = 0;
 
-int pwm_counter = 0;
 char servo_select = 0;
 
 volatile int run = 0;
@@ -26,19 +25,15 @@ ISR(USART_RX_vect) {
 			run = 0;
 		} else {
 			setServoAngle(servo_select, atoi(bytes));
+			char test = getServoAngle(servo_select);
+			sprintf(bytes, "T: %d\r\n", test);
+			printString(bytes);
 		}
 		bytes_index = 0;
 	} else {
 		bytes[bytes_index] = byte;
 		bytes_index = (bytes_index + 1)%10;
 	}
-}
-
-
-ISR(TIMER1_COMPA_vect) {
-	pwm_counter = (pwm_counter + 1)%250;
-
-	pinControl(pwm_counter);
 }
 
 void clear_clkpr (void) {
@@ -50,7 +45,8 @@ int main(void) {
 	
 	clear_clkpr(); //set clock to 8MHz
 	initUSART(8);
-	
+
+
 	registerServo(0);
 	registerServo(1);
 	registerServo(2);
@@ -60,37 +56,37 @@ int main(void) {
 	registerServo(6);
 	registerServo(7);
 	
-	initServoTimer(100);
+	initServoTimer();
 
 	printString("Welcome!\r\n");
 
 	while(1) {
 		if(run == 1) {
-			setServoAngle(0, 22);
-			setServoAngle(1, 14);
+			setServoAngle(0, 140);
+			setServoAngle(1, 60);
 
-			setServoAngle(2, 12);
-			setServoAngle(3, 20);
+			setServoAngle(2, 40);
+			setServoAngle(3, 160);
 
-			setServoAngle(4, 22);
-			setServoAngle(5, 24);
+			setServoAngle(4, 140);
+			setServoAngle(5, 160);
 
-			setServoAngle(6, 12);
-			setServoAngle(7, 10);
+			setServoAngle(6, 40);
+			setServoAngle(7, 20);
 			_delay_ms(2000);
 
 
-			setServoAngle(0, 17);
-			setServoAngle(1, 24);
+			setServoAngle(0, 90);
+			setServoAngle(1, 160);
 
-			setServoAngle(2, 17);
-			setServoAngle(3, 10);
+			setServoAngle(2, 90);
+			setServoAngle(3, 20);
 
-			setServoAngle(4, 17);
-			setServoAngle(5, 14);
+			setServoAngle(4, 90);
+			setServoAngle(5, 60);
 
-			setServoAngle(6, 17);
-			setServoAngle(7, 20);
+			setServoAngle(6, 90);
+			setServoAngle(7, 120);
 			_delay_ms(2000);
 		}
 	}
